@@ -134,6 +134,10 @@
 				<plugin>
 					<artifactId>maven-surefire-plugin</artifactId>
 					<version>2.20.1</version>
+					<configuration>
+						<!-- 不指定单元测试 -->
+						<skipTests>true</skipTests>
+					</configuration>
 				</plugin>
 				<plugin>
 					<artifactId>maven-jar-plugin</artifactId>
