@@ -14,9 +14,14 @@ $uname mvn clean compile package
 If there is build success, Then the package did.chain.agent-0.0.1.jar will be in target directory.
 
 ## Configure project properties
-In project directory, open ./src/resources/application.properties
+In project directory, create configuration file from the template:
+
+```
+cp -v ./src/resources/application.properties.in ./src/resources/application.properties
+```
 
 ### Configure dababase
+
 Change spring.datasource to your database.like:
 spring.datasource.url=jdbc:mariadb://localhost:3306/up_chain_wallets?useUnicode=true&characterEncoding=UTF-8&useSSL=false
 spring.datasource.username=root
