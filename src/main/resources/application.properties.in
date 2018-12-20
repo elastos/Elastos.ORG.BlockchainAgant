@@ -1,5 +1,5 @@
 ## chain restful url
-node.didPrefix           = @ELA_REST_API@
+node.didPrefix           = @DID_REST_API@
 node.connectionCount     = /api/v1/node/connectioncount
 node.state               = /api/v1/node/state
 node.blockTxByHeight     = /api/v1/block/transactions/height
