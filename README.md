@@ -14,10 +14,17 @@ $uname mvn clean compile package
 If there is build success, Then the package did.chain.agent-0.0.1.jar will be in target directory.
 
 ## Configure project properties
-In project directory, open ./src/resources/application.properties
+In project directory, create configuration file from the template:
+
+```bash
+$ pushd src/main/resources
+$ cp -v application.properties.in application.properties
+$ popd
+```
 
 ### Configure database
 First create database table use sql file in project: block_chain_agent.sql
+
 Change spring.datasource to your database.like:
 spring.datasource.url=jdbc:mariadb://localhost:3306/up_chain_wallets?useUnicode=true&characterEncoding=UTF-8&useSSL=false
 spring.datasource.username=root
@@ -36,12 +43,14 @@ So we recommend the number is bigger than 100 and less than 1000.
 
 Copy did.chain.service-0.0.1.jar to your deploy directory.
 then use jar command to run this spring boot application.
+
 ```shell
 $uname java -jar did.chain.agent-0.0.1.jar
 ```
+## Web Service APIs
 
-## Get deposit address for renewal
-All the up chain fee is go from deposit wallet, so you will get deposit address to renewal the system.
+### Get deposit address for renewal
+All the up chain fee go from deposit wallet, so you will get deposit address to renewal the system.
 
 For example:
 We get from our local did chain service request like this:
@@ -57,7 +66,7 @@ If Success, we will get response like:
 ```
 The "result" is deposit wallet address, which need to have enough ela(>10ela) to pay the up chain fee. 
 
-## Renewal all the up chain wallets
+### Renewal all the up chain wallets
 After you renewal the deposit wallet. You should call this api to renewal the really work wallets(up chain wallet) from the deposit wallet,
 to make sure the up chain recording be success.  
 
@@ -85,7 +94,7 @@ If Success, we will get response like:
 ```
 The "result" is txid, which is the transaction id of deposit wallet transfer to up chain wallets.
 
-## Up raw data to side chain
+### Up raw data to side chain
 
 For example:
 
