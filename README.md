@@ -16,7 +16,8 @@ If there is build success, Then the package did.chain.agent-0.0.1.jar will be in
 ## Configure project properties
 In project directory, open ./src/resources/application.properties
 
-### Configure dababase
+### Configure database
+First create database table use sql file in project: block_chain_agent.sql
 Change spring.datasource to your database.like:
 spring.datasource.url=jdbc:mariadb://localhost:3306/up_chain_wallets?useUnicode=true&characterEncoding=UTF-8&useSSL=false
 spring.datasource.username=root
@@ -24,7 +25,7 @@ spring.datasource.password=12345678
 spring.datasource.driver-class-name=org.mariadb.jdbc.Driver
 
 ### Configure did side chain address
-Change "node.didPrefix" to your did side chain node url. 
+Change "node.didPrefix" to your did side chain node url.
 
 ### Configure did up chain wallets sum 
 Change "wallet.sum" to change the amount of the wallets to be used to up chain. 
@@ -63,7 +64,7 @@ to make sure the up chain recording be success.
 For example:
 We post to our local did chain service request like this:
 ```url
-http://localhost:8093/api/v1/wallets/renewal
+http://localhost:8093/api/v1/upchain/wallets/renewal
 ```
 with header: 
 ```json
@@ -82,16 +83,14 @@ If Success, we will get response like:
     "status": 200
 }
 ```
-The "result" is txid, which is the transaction id of deposit wallet transfer to up chain wallets. 
-
+The "result" is txid, which is the transaction id of deposit wallet transfer to up chain wallets.
 
 ## Up raw data to side chain
 
 For example:
 
 I have raw data (which can be created by API:ElaDidService.packDidRawData):
-```json
-{"msg":"7B22646964223A22696A5950654E51354B336B624A6D5545486D566153345439566F5350694634585164222C22646964537461747573223A224E6F726D616C222C2270726F7065727479223A7B226B6579223A226D795F6E6F7465626F6F6B73222C22737461747573223A224E6F726D616C222C2276616C7565223A225B5C2244656C6C5C222C5C224D61635C222C5C225468696E6B7061645C225D227D2C22746167223A224449442050726F7065727479222C2276657273696F6E223A22312E30227D","sig":"92E40A61AFB297C8B7AA97E27DF20B661507C869BA5A7E5F7A08E84791B5100AE4B370E6669F833865223DC2A2D645BECC199CFC31B1A55DA92C0B0E40C09455","pub":"022839482C0D6A844C817F6AEACDD0BC6141A9067105292E8DB024C5A3E78D7C9C"}
+```json {"msg":"7B22646964223A22696A5950654E51354B336B624A6D5545486D566153345439566F5350694634585164222C22646964537461747573223A224E6F726D616C222C2270726F7065727479223A7B226B6579223A226D795F6E6F7465626F6F6B73222C22737461747573223A224E6F726D616C222C2276616C7565223A225B5C2244656C6C5C222C5C224D61635C222C5C225468696E6B7061645C225D227D2C22746167223A224449442050726F7065727479222C2276657273696F6E223A22312E30227D","sig":"92E40A61AFB297C8B7AA97E27DF20B661507C869BA5A7E5F7A08E84791B5100AE4B370E6669F833865223DC2A2D645BECC199CFC31B1A55DA92C0B0E40C09455","pub":"022839482C0D6A844C817F6AEACDD0BC6141A9067105292E8DB024C5A3E78D7C9C"}
 ```
 Then we post to our local did chain service request like this:
 ```url
