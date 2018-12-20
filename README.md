@@ -16,8 +16,10 @@ If there is build success, Then the package did.chain.agent-0.0.1.jar will be in
 ## Configure project properties
 In project directory, create configuration file from the template:
 
-```
-cp -v ./src/resources/application.properties.in ./src/resources/application.properties
+```bash
+$ pushd src/main/resources
+$ cp -v application.properties.in application.properties
+$ popd
 ```
 
 ### Configure dababase
@@ -40,6 +42,7 @@ So we recommend the number is bigger than 100 and less than 1000.
 
 Copy did.chain.service-0.0.1.jar to your deploy directory.
 then use jar command to run this spring boot application.
+
 ```shell
 $uname java -jar did.chain.agent-0.0.1.jar
 ```
