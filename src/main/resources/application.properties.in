@@ -1,6 +1,5 @@
 ## chain restful url
-node.didPrefix              = http://localhost:21334
-#node.didPrefix           = http://did-testnet-002.elastos.org:21604
+node.didPrefix           = @DID_REST_API@
 node.connectionCount     = /api/v1/node/connectioncount
 node.state               = /api/v1/node/state
 node.blockTxByHeight     = /api/v1/block/transactions/height
@@ -45,7 +44,7 @@ did.mainChainAddress     =XKUh4GLhFJiqAMTF6HyWQrV9pK9HcGUdfJ
 wallets.sum =1000
 
 ## server config
-server.port              = 8093
+server.port              = 8080
 server.tomcat.basedir=./
 server.tomcat.accesslog.enabled=true
 server.tomcat.accesslog.directory=./logs/access/
@@ -54,9 +53,9 @@ server.tomcat.accesslog.pattern=%{yyyyMMddHHmmssSSS}t|%a|%h|%H|%r|%{Referer}i|%s
 server.connection-timeout=60000
 
 ## data source
-spring.datasource.url=jdbc:mariadb://localhost:3306/block_chain_agent?useUnicode=true&characterEncoding=UTF-8&useSSL=false
-spring.datasource.username=root
-spring.datasource.password=12345678
+spring.datasource.url=jdbc:mariadb://@DB_HOST@:3306/@DB_NAME@?useUnicode=true&characterEncoding=UTF-8&useSSL=false
+spring.datasource.username=@DB_USER@
+spring.datasource.password=@DB_PASS@
 spring.datasource.driver-class-name=org.mariadb.jdbc.Driver
 # Hikari 数据源专用配置
 spring.datasource.hikari.maximum-pool-size=20
