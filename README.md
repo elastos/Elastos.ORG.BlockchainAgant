@@ -50,12 +50,15 @@ $uname java -jar did.chain.agent-0.0.1.jar
 ## Web Service APIs
 
 ### Get deposit address for renewal
+```url
+/api/v1/upchain/deposit/address
+```
 All the up chain fee go from deposit wallet, so you will get deposit address to renewal the system.
 
 For example:
 We get from our local did chain service request like this:
 ```url
-http://localhost:8093/api/v1/upchain/deposit/address
+http://localhost:8093/api/1/blockagent/upchain/deposit/address
 ```
 If Success, we will get response like:
 ```json
@@ -67,13 +70,16 @@ If Success, we will get response like:
 The "result" is deposit wallet address, which need to have enough ela(>10ela) to pay the up chain fee. 
 
 ### Renewal all the up chain wallets
+```url
+/api/1/blockagent/upchain/wallets/renewal
+```
 After you renewal the deposit wallet. You should call this api to renewal the really work wallets(up chain wallet) from the deposit wallet,
 to make sure the up chain recording be success.  
 
 For example:
 We post to our local did chain service request like this:
 ```url
-http://localhost:8093/api/v1/upchain/wallets/renewal
+http://localhost:8093/api/1/blockagent/upchain/wallets/renewal
 ```
 with header: 
 ```json
@@ -95,21 +101,23 @@ If Success, we will get response like:
 The "result" is txid, which is the transaction id of deposit wallet transfer to up chain wallets.
 
 ### Up raw data to side chain
+```url
+/api/1/blockagent/upchain/data
+```
 
 For example:
-
 I have raw data (which can be created by API:ElaDidService.packDidRawData):
 ```json {"msg":"7B22646964223A22696A5950654E51354B336B624A6D5545486D566153345439566F5350694634585164222C22646964537461747573223A224E6F726D616C222C2270726F7065727479223A7B226B6579223A226D795F6E6F7465626F6F6B73222C22737461747573223A224E6F726D616C222C2276616C7565223A225B5C2244656C6C5C222C5C224D61635C222C5C225468696E6B7061645C225D227D2C22746167223A224449442050726F7065727479222C2276657273696F6E223A22312E30227D","sig":"92E40A61AFB297C8B7AA97E27DF20B661507C869BA5A7E5F7A08E84791B5100AE4B370E6669F833865223DC2A2D645BECC199CFC31B1A55DA92C0B0E40C09455","pub":"022839482C0D6A844C817F6AEACDD0BC6141A9067105292E8DB024C5A3E78D7C9C"}
 ```
 Then we post to our local did chain service request like this:
 ```url
-http://localhost:8093/api/v1/upchain/data
+http://localhost:8093/api/1/blockagent/upchain/data
 ```
 with header: 
 ```json
 [{"key":"Content-Type","value":"application/json","description":"","enabled":true}]
 ```
-and the raw data in body of curse.
+and the raw data in post body of curse.
 
 If Success, we will get response like:
 ```json
