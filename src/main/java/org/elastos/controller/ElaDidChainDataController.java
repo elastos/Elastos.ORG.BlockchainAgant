@@ -21,7 +21,7 @@ import java.util.Map;
  * 9/20/18
  */
 @RestController
-@RequestMapping("/api/1/blockagent/upchain/")
+@RequestMapping("/api/1/blockagent/upchain")
 public class ElaDidChainDataController {
 
     @Autowired

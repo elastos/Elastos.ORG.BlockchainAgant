@@ -64,10 +64,11 @@ public class ElaDidChainDataService {
         }
 
         Long lMoney = Math.round(ela * basicConfiguration.ONE_ELA());
-        if (lMoney < 10 * basicConfiguration.ONE_ELA()) {
-            ReturnMsgEntity ret = new ReturnMsgEntity().setResult("There should be at least 10 ela for sending to up chain wallets").setStatus(retCodeConfiguration.BAD_REQUEST());
-            return ret;
-        }
+        //todo
+//        if (lMoney < 10 * basicConfiguration.ONE_ELA()) {
+//            ReturnMsgEntity ret = new ReturnMsgEntity().setResult("There should be at least 10 ela for sending to up chain wallets").setStatus(retCodeConfiguration.BAD_REQUEST());
+//            return ret;
+//        }
         Double depositRest = upChainWalletsManager.getRestOfDeposit();//from chain sela
         if (null == depositRest) {
             logger.error("renewalUpChainWallets getRestOfDeposit failed");
