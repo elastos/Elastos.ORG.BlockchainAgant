@@ -64,11 +64,11 @@ public class ElaDidChainDataService {
         }
 
         Long lMoney = Math.round(ela * basicConfiguration.ONE_ELA());
-        //todo
-//        if (lMoney < 10 * basicConfiguration.ONE_ELA()) {
-//            ReturnMsgEntity ret = new ReturnMsgEntity().setResult("There should be at least 10 ela for sending to up chain wallets").setStatus(retCodeConfiguration.BAD_REQUEST());
-//            return ret;
-//        }
+        if (lMoney < basicConfiguration.ONE_ELA()) {
+            ReturnMsgEntity ret = new ReturnMsgEntity().setResult("There should be at least 10 ela for sending to up chain wallets").setStatus(retCodeConfiguration.BAD_REQUEST());
+            return ret;
+        }
+
         Double depositRest = upChainWalletsManager.getRestOfDeposit();//from chain sela
         if (null == depositRest) {
             logger.error("renewalUpChainWallets getRestOfDeposit failed");
@@ -76,6 +76,7 @@ public class ElaDidChainDataService {
             ReturnMsgEntity ret = new ReturnMsgEntity().setResult("Err: The deposit wallet get rest failed!").setStatus(retCodeConfiguration.INTERNAL_ERROR());
             return ret;
         }
+
         Long lDepositRest = Math.round(depositRest * basicConfiguration.ONE_ELA());
         if (lDepositRest < lMoney) {
             ReturnMsgEntity ret = new ReturnMsgEntity().setResult("There is not enough ela in deposit wallet.").setStatus(retCodeConfiguration.BAD_REQUEST());
