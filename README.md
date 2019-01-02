@@ -26,10 +26,12 @@ $ popd
 First create database table use sql file in project: block_chain_agent.sql
 
 Change spring.datasource to your database.like:
+```yaml
 spring.datasource.url=jdbc:mariadb://localhost:3306/up_chain_wallets?useUnicode=true&characterEncoding=UTF-8&useSSL=false
 spring.datasource.username=root
 spring.datasource.password=12345678
 spring.datasource.driver-class-name=org.mariadb.jdbc.Driver
+```
 
 ### Configure did side chain address
 Change "node.didPrefix" to your did side chain node url.
