@@ -9,6 +9,8 @@ package org.elastos.controller;
 import com.alibaba.fastjson.JSON;
 import org.elastos.entity.ReturnMsgEntity;
 import org.elastos.service.ElaDidChainDataService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +25,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/1/blockagent/upchain")
 public class ElaDidChainDataController {
+    private static Logger logger = LoggerFactory.getLogger(ElaDidChainDataController.class);
 
     @Autowired
     private ElaDidChainDataService didChainService;
@@ -53,6 +56,7 @@ public class ElaDidChainDataController {
     @RequestMapping(value = "echo", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public String echo(@RequestAttribute String reqBody) {
+        logger.info("chain agent echo data:" + reqBody);
         return reqBody;
     }
 }

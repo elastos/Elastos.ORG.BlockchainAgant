@@ -63,12 +63,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
 			<!--排除这个logback-classic-->
-			<exclusions>
-				<exclusion>
-					<groupId>com.hynnet</groupId>
-					<artifactId>logback-classic</artifactId>
-				</exclusion>
-			</exclusions>
+			<!--<exclusions>-->
+				<!--<exclusion>-->
+					<!--<groupId>com.hynnet</groupId>-->
+					<!--<artifactId>logback-classic</artifactId>-->
+				<!--</exclusion>-->
+			<!--</exclusions>-->
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
