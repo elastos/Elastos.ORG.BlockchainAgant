@@ -41,7 +41,7 @@ did.burnAddress          =0000000000000000000000000000000000
 did.mainChainAddress     =XKUh4GLhFJiqAMTF6HyWQrV9pK9HcGUdfJ
 
 ## Up chain wallets
-wallets.sum =1000
+wallets.sum =10000
 
 ## server config
 server.port              = 8080
