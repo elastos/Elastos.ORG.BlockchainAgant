@@ -140,10 +140,10 @@ String createAuthHeaderValue(){
     String acc_secret = "qtvb4PlRVGLYYYQxyLIo3OgyKI7kUL"; //Get from elastos service platform access key
     long time = new Date().getTime();
     String strTime = String.valueOf(time);
-    SimpleHash hash = new SimpleHash("md5", secret, strTime);
+    SimpleHash hash = new SimpleHash("md5", acc_secret, strTime);
     String auth = hash.toHex();
     Map<String, String> map = new HashMap<>();
-    map.put("id", id);
+    map.put("id", acc_id);
     map.put("time", String.valueOf(time));
     map.put("auth", auth);
     String X-Elastos-Agent-Auth_value = JSON.toJSONString(map);
