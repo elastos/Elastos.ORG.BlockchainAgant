@@ -103,8 +103,20 @@ If Success, we will get response like:
 The "result" is txid, which is the transaction id of deposit wallet transfer to up chain wallets.
 
 ### Up raw data to side chain
-```url
-/api/1/blockagent/upchain/data
+```yaml
+HTTP: POST
+URL: /api/1/blockagent/upchain/data
+HEADERS:
+    Content-Type: application/json
+    X-Elastos-Agent-Auth: {"auth":"auth_code","id":"org.elastos.bless.star","time":"system time(long)"}
+data: {
+    "msg":"7B22646964223A22696A5950654E51354B336B624A6D5545486D566153345439566F5350694634585164222C22646964537461747573223A224E6F726D616C222C2270726F7065727479223A7B226B6579223A226D795F6E6F7465626F6F6B73222C22737461747573223A224E6F726D616C222C2276616C7565223A225B5C2244656C6C5C222C5C224D61635C222C5C225468696E6B7061645C225D227D2C22746167223A224449442050726F7065727479222C2276657273696F6E223A22312E30227D",
+    "sig":"92E40A61AFB297C8B7AA97E27DF20B661507C869BA5A7E5F7A08E84791B5100AE4B370E6669F833865223DC2A2D645BECC199CFC31B1A55DA92C0B0E40C09455",
+    "pub":"022839482C0D6A844C817F6AEACDD0BC6141A9067105292E8DB024C5A3E78D7C9C"
+    }
+return:
+    成功：{"status":200, "result":{"txid":"b58683d618be1f16cc61f1ade095b2082f9c5e15812dd188de20e7a336d2ae35"}};
+    失败:{"status":400, "result":"Err msg"}
 ```
 
 For example:
@@ -115,10 +127,31 @@ Then we post to our local did chain service request like this:
 ```url
 http://localhost:8093/api/1/blockagent/upchain/data
 ```
-with header: 
-```json
-[{"key":"Content-Type","value":"application/json","description":"","enabled":true}]
+with header like: 
+```yaml
+Content-Type: application/json
+X-Elastos-Agent-Auth: {"auth":"03CE43D7160868F83A1E3B1F94B6D5993D9A710EBBBAE755496F0D426C62148E20", "id":"unCZRceA8o7dbny", "time":"1551169928000"}
 ```
+We Create HTTP header "X-Elastos-Agent-Auth" lile:
+```java
+import org.apache.shiro.crypto.hash.SimpleHash;
+String createAuthHeaderValue(){
+    String acc_id = "unCZRceA8o7dbny"; //Get from elastos service platform access key
+    String acc_secret = "qtvb4PlRVGLYYYQxyLIo3OgyKI7kUL"; //Get from elastos service platform access key
+    long time = new Date().getTime();
+    String strTime = String.valueOf(time);
+    SimpleHash hash = new SimpleHash("md5", secret, strTime);
+    String auth = hash.toHex();
+    Map<String, String> map = new HashMap<>();
+    map.put("id", id);
+    map.put("time", String.valueOf(time));
+    map.put("auth", auth);
+    String X-Elastos-Agent-Auth_value = JSON.toJSONString(map);
+    return X-Elastos-Agent-Auth_value;
+}
+```
+
+
 and the raw data in post body of curse.
 
 If Success, we will get response like:
