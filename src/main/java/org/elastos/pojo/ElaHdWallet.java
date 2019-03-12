@@ -1,4 +1,4 @@
-package org.elastos.POJO;
+package org.elastos.pojo;
 
 
 public class ElaHdWallet {

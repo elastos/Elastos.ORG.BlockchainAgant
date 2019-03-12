@@ -130,7 +130,7 @@ http://localhost:8093/api/1/blockagent/upchain/data
 with header like: 
 ```yaml
 Content-Type: application/json
-X-Elastos-Agent-Auth: {"auth":"03CE43D7160868F83A1E3B1F94B6D5993D9A710EBBBAE755496F0D426C62148E20", "id":"unCZRceA8o7dbny", "time":"1551169928000"}
+X-Elastos-Agent-Auth: {"auth":"c5b50c5b9f1445d8d894cd63e296e4f4", "id":"unCZRceA8o7dbny", "time":"1551169928000"}
 ```
 We Create HTTP header "X-Elastos-Agent-Auth" lile:
 ```java

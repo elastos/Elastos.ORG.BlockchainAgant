@@ -2,11 +2,11 @@ package org.elastos.service;
 
 import com.alibaba.fastjson.JSON;
 import jnr.ffi.annotations.Synchronized;
-import org.elastos.DAO.DepositWalletRepository;
-import org.elastos.DAO.UpChainRecordRepository;
-import org.elastos.DTO.DepositWallet;
-import org.elastos.DTO.UpChainRecord;
-import org.elastos.POJO.ElaHdWallet;
+import org.elastos.dao.DepositWalletRepository;
+import org.elastos.dao.UpChainRecordRepository;
+import org.elastos.dto.DepositWallet;
+import org.elastos.dto.UpChainRecord;
+import org.elastos.pojo.ElaHdWallet;
 import org.elastos.conf.*;
 import org.elastos.ela.Ela;
 import org.elastos.entity.ChainType;
@@ -62,20 +62,13 @@ public class UpChainWalletsManager implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        System.out.println("------------In UpChainWalletsManager----------------");
-        //Get Deposit
-        getDepositWalletFromDb();
-        if (depositWallet == null) {
-            createDepositWallet();
-            saveDepositWalletToDb();
-        }
-
-        generateUpChainWallets();
-
-        System.out.println("------------Out UpChainWalletsManager----------------");
     }
 
-    private void generateUpChainWallets() {
+    boolean isEmptyWallets(){
+        return (null == depositWallet);
+    }
+
+    void generateUpChainWallets() {
         if (null == depositWallet) {
             logger.info("Err createUpChainWallets before depositWallet initialize");
             System.out.println("Err createUpChainWallets before depositWallet initialize");
@@ -109,7 +102,7 @@ public class UpChainWalletsManager implements InitializingBean {
         }
     }
 
-    private void createDepositWallet() {
+    void createDepositWallet() {
         String mnemonic = ElaHdSupport.generateMnemonic();
 
         //Default: 1st index of wallets is deposit wallet.
@@ -132,14 +125,14 @@ public class UpChainWalletsManager implements InitializingBean {
         depositWallet.setMaxUse(0);
     }
 
-    private void saveDepositWalletToDb() {
+    void saveDepositWalletToDb() {
         if (null != depositWallet) {
             depositWallet.setId(depositIdx);
             depositWalletRepository.save(depositWallet);
         }
     }
 
-    private void getDepositWalletFromDb() {
+    void getDepositWalletFromDb() {
         Optional<DepositWallet> ret = depositWalletRepository.findById(depositIdx);
         if (!ret.isPresent()) {
             logger.info("getDepositWalletFromDb depositWalletRepository.findById no data");

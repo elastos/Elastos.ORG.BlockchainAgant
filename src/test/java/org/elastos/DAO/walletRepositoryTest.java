@@ -1,7 +1,7 @@
 package org.elastos.DAO;
 
-import org.elastos.DTO.DepositWallet;
-import org.elastos.conf.RetCodeConfiguration;
+import org.elastos.dao.DepositWalletRepository;
+import org.elastos.dto.DepositWallet;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;

@@ -1,6 +1,6 @@
-package org.elastos.DAO;
+package org.elastos.dao;
 
-import org.elastos.DTO.UpChainRecord;
+import org.elastos.dto.UpChainRecord;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
