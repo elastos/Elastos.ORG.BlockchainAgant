@@ -45,7 +45,7 @@ public class AccessKeyUtil {
         }
 
         String time = String.valueOf(map.get("time"));
-        SimpleHash hash = new SimpleHash("md5", accessKey.getKeySecret(), time);
+        SimpleHash hash = new SimpleHash("md5", accessKey.getKeySecret(), time, 1);
         String encodedPassword = hash.toHex();
         if (!encodedPassword.equals(map.get("auth"))) {
             logger.error("access accSecret wrong.");
