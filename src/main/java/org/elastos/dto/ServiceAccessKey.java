@@ -18,6 +18,8 @@ public class ServiceAccessKey {
     private String status;
     @Column(name="time", nullable = false, length = 32)
     private String time;
+    @Column(name="note", length = 100)
+    private String note;
     @Column(name="user_service_id", nullable = false)
     private Long userServiceId;
 
@@ -59,6 +61,14 @@ public class ServiceAccessKey {
 
     public void setTime(String time) {
         this.time = time;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
     }
 
     public Long getUserServiceId() {
