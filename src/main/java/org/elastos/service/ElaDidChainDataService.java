@@ -150,6 +150,7 @@ public class ElaDidChainDataService {
         if (null == depositRest) {
             logger.error("ReturnMsgEntity getRestOfDeposit failed");
             System.out.println("ReturnMsgEntity getRestOfDeposit failed");
+        } else {
             data.put("DepositRest", depositRest);
         }
 
