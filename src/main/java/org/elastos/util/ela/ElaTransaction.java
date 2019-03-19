@@ -4,7 +4,7 @@
  * Distributed under the MIT software license, see the accompanying file
  * LICENSE or https://opensource.org/licenses/mit-license.php
  */
-package org.elastos.service.ela;
+package org.elastos.util.ela;
 
 import com.alibaba.fastjson.JSON;
 import net.sf.json.JSONObject;
@@ -17,10 +17,8 @@ import org.elastos.entity.ChainType;
 import org.elastos.entity.Errors;
 import org.elastos.entity.ReturnMsgEntity;
 import org.elastos.exception.ApiRequestDataException;
-import org.elastos.util.ela.ElaKit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -63,7 +61,7 @@ public class ElaTransaction {
             address = addr;
             privateKey = priKey;
             chainType = type;
-            utxoList = didNodeService.getUtxoListByAddr(address, type);
+            utxoList = didNodeService.getUtxoListByAddr(address);
             if (utxoList == null) {
                 throw new ApiRequestDataException(Errors.NOT_ENOUGH_UTXO.val());
             }
@@ -113,8 +111,8 @@ public class ElaTransaction {
         return JSON.toJSONString(senderList);
     }
 
-    public String getReceiverList() {
-        return JSON.toJSONString(receiverList);
+    public List<Receiver> getReceiverList() {
+        return receiverList;
     }
 
     public double getTotalFee() {

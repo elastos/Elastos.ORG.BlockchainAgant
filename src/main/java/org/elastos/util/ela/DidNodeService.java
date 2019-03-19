@@ -4,7 +4,7 @@
  * Distributed under the MIT software license, see the accompanying file
  * LICENSE or https://opensource.org/licenses/mit-license.php
  */
-package org.elastos.service.ela;
+package org.elastos.util.ela;
 
 import com.alibaba.fastjson.JSON;
 import org.elastos.conf.NodeConfiguration;
@@ -15,7 +15,6 @@ import org.elastos.entity.RawTxEntity;
 import org.elastos.entity.ReturnMsgEntity;
 import org.elastos.exception.ApiRequestDataException;
 import org.elastos.util.HttpKit;
-import org.elastos.util.ela.ElaKit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,11 +55,11 @@ public class DidNodeService {
         }
     }
 
-    public List<Map> getUtxoListByAddr(String address, ChainType type) {
+    public List<Map> getUtxoListByAddr(String address) {
 
         checkAddr(address);
 
-        ReturnMsgEntity msgEntity = elaReqChainData(ReqMethod.GET, nodeConfiguration.getUtxoByAddr(type) + "/" + address, null);
+        ReturnMsgEntity msgEntity = elaReqChainData(ReqMethod.GET, nodeConfiguration.getUtxoByAddr() + "/" + address, null);
         if (msgEntity.getStatus() == retCodeConfiguration.SUCC()) {
             try {
                 List<Map> data = (List<Map>) msgEntity.getResult();
@@ -85,8 +84,28 @@ public class DidNodeService {
 
         String jsonEntity = JSON.toJSONString(entity);
         System.out.println("tx send data:" + jsonEntity);
-        ReturnMsgEntity msgEntity = elaReqChainData(ReqMethod.POST, nodeConfiguration.sendRawTransaction(type), jsonEntity);
+        ReturnMsgEntity msgEntity = elaReqChainData(ReqMethod.POST, nodeConfiguration.sendRawTransaction(), jsonEntity);
         return msgEntity;
+    }
+
+    public Double getBalancesByAddr(String address) {
+
+        checkAddr(address);
+
+        ReturnMsgEntity msgEntity = elaReqChainData(ReqMethod.GET, nodeConfiguration.getBalanceByAddr() + "/" + address, null);
+        if (msgEntity.getStatus() == retCodeConfiguration.SUCC()) {
+            try {
+                String data = (String) msgEntity.getResult();
+                Double ela = Double.valueOf(data);
+                return ela;
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                logger.warn(" address has no value yet .");
+                return null;
+            }
+        } else {
+            return null;
+        }
     }
 
     private ReturnMsgEntity elaReqChainData(ReqMethod method, String url, String data) {

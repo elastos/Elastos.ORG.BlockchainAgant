@@ -11,6 +11,7 @@ import org.elastos.annotation.Access;
 import org.elastos.conf.RetCodeConfiguration;
 import org.elastos.constants.Constants;
 import org.elastos.entity.ReturnMsgEntity;
+import org.elastos.util.AccessKeyUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
-import util.AccessKeyUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

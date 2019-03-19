@@ -1,4 +1,4 @@
-package util;
+package org.elastos.util;
 
 import com.alibaba.fastjson.JSON;
 import org.apache.shiro.crypto.hash.SimpleHash;

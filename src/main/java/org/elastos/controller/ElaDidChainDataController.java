@@ -26,7 +26,14 @@ public class ElaDidChainDataController {
     @Autowired
     private ElaDidChainDataService didChainService;
 
-    @RequestMapping(value = "deposit/address", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "rest", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public String getRest() {
+        ReturnMsgEntity ret = didChainService.getRest();
+        return JSON.toJSONString(ret);
+    }
+
+    @RequestMapping(value = "deposit/address", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public String getDepositAddress() {
         ReturnMsgEntity ret = didChainService.getDepositAddress();

@@ -48,63 +48,63 @@ public class NodeConfiguration {
         this.didJSONRPC = didJSONRPC;
     }
 
-    public String getConnectionCount(ChainType type) {
+    public String getConnectionCount() {
         return didPrefix + connectionCount;
     }
 
-    public String getState(ChainType type) {
+    public String getState() {
         return didPrefix + state;
     }
 
-    public String getBlockTxByHeight(ChainType type) {
+    public String getBlockTxByHeight() {
         return didPrefix + blockTxByHeight;
     }
 
-    public String getBlockByHeight(ChainType type) {
+    public String getBlockByHeight() {
         return didPrefix + blockByHeight;
     }
 
-    public String getBlockByhash(ChainType type) {
+    public String getBlockByhash() {
         return didPrefix + blockByhash;
     }
 
-    public String getBlockHeight(ChainType type) {
+    public String getBlockHeight() {
         return didPrefix + blockHeight;
     }
 
-    public String getBlockHash(ChainType type) {
+    public String getBlockHash() {
         return didPrefix + blockHash;
     }
 
-    public String getTransaction(ChainType type) {
+    public String getTransaction() {
         return didPrefix + transaction;
     }
 
-    public String getAsset(ChainType type) {
+    public String getAsset() {
         return didPrefix + asset;
     }
 
-    public String getBalanceByAddr(ChainType type) {
+    public String getBalanceByAddr() {
         return didPrefix + balanceByAddr;
     }
 
-    public String getBalanceByAsset(ChainType type) {
+    public String getBalanceByAsset() {
         return didPrefix + balanceByAsset;
     }
 
-    public String getUtxoByAsset(ChainType type) {
+    public String getUtxoByAsset() {
         return didPrefix + utxoByAsset;
     }
 
-    public String getUtxoByAddr(ChainType type) {
+    public String getUtxoByAddr() {
         return didPrefix + utxoByAddr;
     }
 
-    public String sendRawTransaction(ChainType type) {
+    public String sendRawTransaction() {
         return didPrefix + sendRawTransaction;
     }
 
-    public String getTransactionPool(ChainType type) {
+    public String getTransactionPool() {
         return didPrefix + transactionPool;
     }
 

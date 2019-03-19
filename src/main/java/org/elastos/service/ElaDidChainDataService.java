@@ -8,12 +8,15 @@ import org.elastos.ela.Ela;
 import org.elastos.entity.ChainType;
 import org.elastos.entity.ReturnMsgEntity;
 import org.elastos.pojo.ElaHdWallet;
-import org.elastos.service.ela.DidNodeService;
-import org.elastos.service.ela.ElaTransaction;
+import org.elastos.util.ela.DidNodeService;
+import org.elastos.util.ela.ElaTransaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 @Service
@@ -137,6 +140,22 @@ public class ElaDidChainDataService {
             logger.error("Err sendRawDataOnChain upChainData failed.");
             System.out.println("Err sendRawDataOnChain upChainData failed.");
         }
+        return ret;
+    }
+
+    //获取所有余额信息
+    public ReturnMsgEntity getRest() {
+        Map<String, Double> data = new HashMap<>();
+        Double depositRest = upChainWalletsManager.getRestOfDeposit();//from chain sela
+        if (null == depositRest) {
+            logger.error("ReturnMsgEntity getRestOfDeposit failed");
+            System.out.println("ReturnMsgEntity getRestOfDeposit failed");
+            data.put("DepositRest", depositRest);
+        }
+
+        double rest = upChainWalletsManager.getWalletsRest();
+        data.put("WorkingWalltesRest", rest);
+        ReturnMsgEntity ret = new ReturnMsgEntity().setResult(data).setStatus(retCodeConfiguration.SUCC());
         return ret;
     }
 
