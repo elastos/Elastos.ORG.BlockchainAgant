@@ -151,7 +151,6 @@ String createAuthHeaderValue(){
 }
 ```
 
-
 and the raw data in post body of curse.
 
 If Success, we will get response like:
@@ -162,3 +161,26 @@ If Success, we will get response like:
 }
 ```
 The "result" is txid, which is the record transaction id.
+
+### Get rest of wallets 
+```url
+/api/v1/upchain/rest
+```
+Get rest of deposit and working wallets.
+
+For example:
+We get from our local did chain service request like this:
+```url
+http://localhost:8093/api/1/blockagent/upchain/rest
+```
+If Success, we will get response like:
+
+```json
+{
+    "result": {
+        "DepositRest": 9.999597,
+        "WorkingWalltesRest": 11.099888999999978
+    },
+    "status": 200
+}
+```
