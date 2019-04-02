@@ -1,6 +1,7 @@
 package org.elastos.DAO;
 
-import org.elastos.DTO.UpChainRecord;
+import org.elastos.dao.UpChainRecordRepository;
+import org.elastos.dto.UpChainRecord;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

@@ -1,11 +1,11 @@
-package org.elastos.POJO;
+package org.elastos.pojo;
 
 
 public class ElaHdWallet {
     private String privateKey;
     private String publicKey;
     private String publicAddress;
-    private Integer rest = 0;
+    private double rest = 0.0;
 
     public String getPrivateKey() {
         return privateKey;
@@ -31,11 +31,11 @@ public class ElaHdWallet {
         this.publicAddress = publicAddress;
     }
 
-    public Integer getRest() {
+    public double getRest() {
         return rest;
     }
 
-    public void setRest(Integer rest) {
+    public void setRest(double rest) {
         this.rest = rest;
     }
 }

@@ -1,6 +1,6 @@
-package org.elastos.DTO;
+package org.elastos.dto;
 
-import org.elastos.POJO.ElaHdWallet;
+import org.elastos.pojo.ElaHdWallet;
 
 import javax.persistence.*;
 

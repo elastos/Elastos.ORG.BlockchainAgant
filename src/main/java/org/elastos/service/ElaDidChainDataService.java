@@ -1,18 +1,22 @@
 package org.elastos.service;
 
-import org.elastos.DAO.UpChainRecordRepository;
-import org.elastos.DTO.UpChainRecord;
-import org.elastos.POJO.ElaHdWallet;
+import org.elastos.dao.UserServiceRepository;
 import org.elastos.conf.*;
+import org.elastos.dao.UpChainRecordRepository;
+import org.elastos.dto.UpChainRecord;
 import org.elastos.ela.Ela;
 import org.elastos.entity.ChainType;
 import org.elastos.entity.ReturnMsgEntity;
-import org.elastos.service.ela.DidNodeService;
-import org.elastos.service.ela.ElaTransaction;
+import org.elastos.pojo.ElaHdWallet;
+import org.elastos.util.ela.DidNodeService;
+import org.elastos.util.ela.ElaTransaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 @Service
@@ -43,6 +47,9 @@ public class ElaDidChainDataService {
 
     @Autowired
     private UpChainRecordRepository upChainRecordRepository;
+
+    @Autowired
+    UserServiceRepository userServiceRepository;
 
     //1. 用户获取充值钱包地址。
     public ReturnMsgEntity getDepositAddress() {
@@ -89,7 +96,15 @@ public class ElaDidChainDataService {
 
 
     //3. 使用上链钱包进行上链记录
-    public ReturnMsgEntity sendRawDataOnChain(String data) {
+    public ReturnMsgEntity sendRawDataOnChain(String data, Long userServiceId) {
+
+        int r = userServiceRepository.useRest(userServiceId);
+        if (1 != r) {
+            logger.error("sendRawDataOnChain no rest");
+            System.out.println("sendRawDataOnChain no rest");
+            return new ReturnMsgEntity().setStatus(retCodeConfiguration.BAD_REQUEST()).setResult("用户无此服务");
+        }
+
 
         //Pack data to tx for record.
         ChainType chainType = nodeConfiguration.getChainType();
@@ -119,7 +134,29 @@ public class ElaDidChainDataService {
             upChainRecord.setTxid((String) ret.getResult());
             upChainRecord.setType(UpChainRecord.UpChainType.Raw_Data_Up_Chain);
             upChainRecordRepository.save(upChainRecord);
+        } else {
+            //Up chain failed, make the rest back.
+            userServiceRepository.addRest(1L, userServiceId);
+            logger.error("Err sendRawDataOnChain upChainData failed.");
+            System.out.println("Err sendRawDataOnChain upChainData failed.");
         }
+        return ret;
+    }
+
+    //获取所有余额信息
+    public ReturnMsgEntity getRest() {
+        Map<String, Double> data = new HashMap<>();
+        Double depositRest = upChainWalletsManager.getRestOfDeposit();//from chain sela
+        if (null == depositRest) {
+            logger.error("ReturnMsgEntity getRestOfDeposit failed");
+            System.out.println("ReturnMsgEntity getRestOfDeposit failed");
+        } else {
+            data.put("DepositRest", depositRest);
+        }
+
+        double rest = upChainWalletsManager.getWalletsRest();
+        data.put("WorkingWalltesRest", rest);
+        ReturnMsgEntity ret = new ReturnMsgEntity().setResult(data).setStatus(retCodeConfiguration.SUCC());
         return ret;
     }
 

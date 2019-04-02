@@ -12,13 +12,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-/**
- *
- * clark
- *
- * 9/4/18
- *
- */
 @Component
 public class InteceptorRegister implements WebMvcConfigurer {
 

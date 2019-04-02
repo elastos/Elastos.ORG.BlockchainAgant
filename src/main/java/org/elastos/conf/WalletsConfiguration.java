@@ -9,15 +9,11 @@ package org.elastos.conf;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-/**
- * clark
- * <p>
- * 9/27/18
- */
 @Component
 @ConfigurationProperties("wallets")
 public class WalletsConfiguration {
     private int sum;
+    private int threshold;
 
     public int getSum() {
         return sum;
@@ -25,5 +21,13 @@ public class WalletsConfiguration {
 
     public void setSum(int sum) {
         this.sum = sum;
+    }
+
+    public int getThreshold() {
+        return threshold;
+    }
+
+    public void setThreshold(int threshold) {
+        this.threshold = threshold;
     }
 }

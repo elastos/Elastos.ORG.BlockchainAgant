@@ -2,19 +2,19 @@ package org.elastos.service;
 
 import com.alibaba.fastjson.JSON;
 import jnr.ffi.annotations.Synchronized;
-import org.elastos.DAO.DepositWalletRepository;
-import org.elastos.DAO.UpChainRecordRepository;
-import org.elastos.DTO.DepositWallet;
-import org.elastos.DTO.UpChainRecord;
-import org.elastos.POJO.ElaHdWallet;
 import org.elastos.conf.*;
+import org.elastos.dao.DepositWalletRepository;
+import org.elastos.dao.UpChainRecordRepository;
+import org.elastos.dto.DepositWallet;
+import org.elastos.dto.UpChainRecord;
 import org.elastos.ela.Ela;
 import org.elastos.entity.ChainType;
 import org.elastos.entity.ReturnMsgEntity;
 import org.elastos.exception.ApiInternalException;
-import org.elastos.service.ela.DidNodeService;
-import org.elastos.service.ela.ElaTransaction;
+import org.elastos.pojo.ElaHdWallet;
+import org.elastos.util.ela.DidNodeService;
 import org.elastos.util.ela.ElaHdSupport;
+import org.elastos.util.ela.ElaTransaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -62,20 +62,13 @@ public class UpChainWalletsManager implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        System.out.println("------------In UpChainWalletsManager----------------");
-        //Get Deposit
-        getDepositWalletFromDb();
-        if (depositWallet == null) {
-            createDepositWallet();
-            saveDepositWalletToDb();
-        }
-
-        generateUpChainWallets();
-
-        System.out.println("------------Out UpChainWalletsManager----------------");
     }
 
-    private void generateUpChainWallets() {
+    boolean isEmptyWallets() {
+        return (null == depositWallet);
+    }
+
+    void generateUpChainWallets() {
         if (null == depositWallet) {
             logger.info("Err createUpChainWallets before depositWallet initialize");
             System.out.println("Err createUpChainWallets before depositWallet initialize");
@@ -88,7 +81,7 @@ public class UpChainWalletsManager implements InitializingBean {
 
         //The 1st wallet used to be deposit wallet, so we begin though 2nd.
         int max = sum + 2;
-        for(int i = 2; i < max; i++) {
+        for (int i = 2; i < max; i++) {
             String wa;
             try {
                 wa = ElaHdSupport.generate(mnemonic, i);
@@ -109,13 +102,13 @@ public class UpChainWalletsManager implements InitializingBean {
         }
     }
 
-    private void createDepositWallet() {
+    void createDepositWallet() {
         String mnemonic = ElaHdSupport.generateMnemonic();
 
         //Default: 1st index of wallets is deposit wallet.
         String deposit;
         try {
-            deposit = ElaHdSupport.generate(mnemonic, (int)depositIdx);
+            deposit = ElaHdSupport.generate(mnemonic, (int) depositIdx);
         } catch (Exception e) {
             e.printStackTrace();
             logger.error("Err createDepositWallet ElaHdSupport.generate Exception!!");
@@ -132,14 +125,14 @@ public class UpChainWalletsManager implements InitializingBean {
         depositWallet.setMaxUse(0);
     }
 
-    private void saveDepositWalletToDb() {
+    void saveDepositWalletToDb() {
         if (null != depositWallet) {
             depositWallet.setId(depositIdx);
             depositWalletRepository.save(depositWallet);
         }
     }
 
-    private void getDepositWalletFromDb() {
+    void getDepositWalletFromDb() {
         Optional<DepositWallet> ret = depositWalletRepository.findById(depositIdx);
         if (!ret.isPresent()) {
             logger.info("getDepositWalletFromDb depositWalletRepository.findById no data");
@@ -149,18 +142,18 @@ public class UpChainWalletsManager implements InitializingBean {
         depositWallet = ret.get();
     }
 
-    public Double getRestOfDeposit(){
+    public Double getRestOfDeposit() {
         return getRestOfWallet(depositWallet.getAddress());
     }
 
-    public Double getRestOfWallet(String address){
+    public Double getRestOfWallet(String address) {
         if (null == address) {
             logger.error("getRestOfWalletByAddress address is null");
             System.out.println("getRestOfWalletByAddress address is null");
             return null;
         }
 
-        List<Map> utxoList = didNodeService.getUtxoListByAddr(address, nodeConfiguration.getChainType());
+        List<Map> utxoList = didNodeService.getUtxoListByAddr(address);
         if (null == utxoList) {
             return 0.0;
         } else {
@@ -168,10 +161,10 @@ public class UpChainWalletsManager implements InitializingBean {
         }
     }
 
-    public Double getRestFromUtxos(List<Map>utxoList){
+    public Double getRestFromUtxos(List<Map> utxoList) {
         double ela = 0.0;
 
-        for (Map<String, Object> utxo :utxoList) {
+        for (Map<String, Object> utxo : utxoList) {
             ela += Double.valueOf(utxo.get("Value") + "");
         }
 
@@ -189,7 +182,7 @@ public class UpChainWalletsManager implements InitializingBean {
     public ReturnMsgEntity averageRenewalUpChainWallets(Double ela) {
         ChainType chainType = nodeConfiguration.getChainType();
 
-        ElaTransaction transaction = new ElaTransaction(chainType, "UpChainService: Transfer deposit to up chain wallets. ela:"+ela+"wallets sum:"+ sum);
+        ElaTransaction transaction = new ElaTransaction(chainType, "UpChainService: Transfer deposit to up chain wallets. ela:" + ela + "wallets sum:" + sum);
         transaction.setRetCodeConfiguration(retCodeConfiguration);
         transaction.setDidConfiguration(didConfiguration);
         transaction.setBasicConfiguration(basicConfiguration);
@@ -198,7 +191,7 @@ public class UpChainWalletsManager implements InitializingBean {
         String sendAddr = Ela.getAddressFromPrivate(depositWallet.getPrivateKey());
         transaction.addSender(sendAddr, depositWallet.getPrivateKey());
 
-        Double fee = ela/sum;
+        Double fee = ela / sum;
         for (ElaHdWallet wallet : walletList) {
             transaction.addReceiver(wallet.getPublicAddress(), fee);
         }
@@ -212,9 +205,54 @@ public class UpChainWalletsManager implements InitializingBean {
 
         if (ret.getStatus() == retCodeConfiguration.SUCC()) {
             UpChainRecord upChainRecord = new UpChainRecord();
-            upChainRecord.setTxid((String)ret.getResult());
+            upChainRecord.setTxid((String) ret.getResult());
             upChainRecord.setType(UpChainRecord.UpChainType.Deposit_Wallets_Transaction);
             upChainRecordRepository.save(upChainRecord);
+        }
+
+        return ret;
+    }
+
+    @Synchronized
+    public ReturnMsgEntity renewalUpChainWallets() {
+        ChainType chainType = nodeConfiguration.getChainType();
+
+        ElaTransaction transaction = new ElaTransaction(chainType, "renewalUpChainWallets: Transfer deposit to up chain wallets");
+        transaction.setRetCodeConfiguration(retCodeConfiguration);
+        transaction.setDidConfiguration(didConfiguration);
+        transaction.setBasicConfiguration(basicConfiguration);
+        transaction.setDidNodeService(didNodeService);
+
+        String sendAddr = Ela.getAddressFromPrivate(depositWallet.getPrivateKey());
+        transaction.addSender(sendAddr, depositWallet.getPrivateKey());
+
+        Double threshold = walletsConfiguration.getThreshold() * Double.valueOf(didConfiguration.getFee());
+        for (ElaHdWallet wallet : walletList) {
+            double fee = threshold - wallet.getRest();
+            if (fee > 0.0) {
+                transaction.addReceiver(wallet.getPublicAddress(), threshold + fee);
+            }
+        }
+
+        if (transaction.getReceiverList().isEmpty()) {
+            return new ReturnMsgEntity().setResult("No need to renewal").setStatus(retCodeConfiguration.SUCC());
+        }
+
+        ReturnMsgEntity ret;
+        try {
+            ret = transaction.transfer();
+        } catch (Exception e) {
+            e.printStackTrace();
+            ret = new ReturnMsgEntity().setResult("Err: renewalUpChainWallets transfer failed").setStatus(retCodeConfiguration.PROCESS_ERROR());
+        }
+
+        if (ret.getStatus() == retCodeConfiguration.SUCC()) {
+            UpChainRecord upChainRecord = new UpChainRecord();
+            upChainRecord.setTxid((String) ret.getResult());
+            upChainRecord.setType(UpChainRecord.UpChainType.Deposit_Wallets_Transaction);
+            upChainRecordRepository.save(upChainRecord);
+        } else {
+            logger.error("Err renewalUpChainWallets transfer failed.");
         }
 
         return ret;
@@ -235,11 +273,21 @@ public class UpChainWalletsManager implements InitializingBean {
     }
 
     @Synchronized
-    public int getWalletsRest() {
-        int rest = 0;
+    public double getWalletsRest() {
+        double rest = 0.0;
         for (ElaHdWallet w : walletList) {
             rest += w.getRest();
         }
         return rest;
+    }
+
+    @Synchronized
+    public void updateWalletsRestFromNode() {
+        for (ElaHdWallet w : walletList) {
+            Double rest = didNodeService.getBalancesByAddr(w.getPublicAddress());
+            if (null != rest) {
+                w.setRest(rest);
+            }
+        }
     }
 }
