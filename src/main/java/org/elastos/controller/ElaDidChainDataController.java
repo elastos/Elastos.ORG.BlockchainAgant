@@ -52,8 +52,8 @@ public class ElaDidChainDataController {
     @RequestMapping(value = "data", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
     @Access
-    public String sendRawDataOnChain(@RequestAttribute String reqBody, @RequestAttribute Long userServiceId) {
-        ReturnMsgEntity ret = didChainService.sendRawDataOnChain(reqBody, userServiceId);
+    public String sendRawDataOnChain(@RequestAttribute String reqBody) {
+        ReturnMsgEntity ret = didChainService.sendRawDataOnChain(reqBody);
         return JSON.toJSONString(ret);
     }
 

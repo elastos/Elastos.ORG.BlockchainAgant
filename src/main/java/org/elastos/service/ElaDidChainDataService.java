@@ -1,8 +1,8 @@
 package org.elastos.service;
 
-import org.elastos.dao.UserServiceRepository;
 import org.elastos.conf.*;
 import org.elastos.dao.UpChainRecordRepository;
+import org.elastos.dao.UserServiceRepository;
 import org.elastos.dto.UpChainRecord;
 import org.elastos.ela.Ela;
 import org.elastos.entity.ChainType;
@@ -96,14 +96,15 @@ public class ElaDidChainDataService {
 
 
     //3. 使用上链钱包进行上链记录
-    public ReturnMsgEntity sendRawDataOnChain(String data, Long userServiceId) {
+//    public ReturnMsgEntity sendRawDataOnChain(String data, Long userServiceId) {
+    public ReturnMsgEntity sendRawDataOnChain(String data) {
 
-        int r = userServiceRepository.useRest(userServiceId);
-        if (1 != r) {
-            logger.error("sendRawDataOnChain no rest");
-            System.out.println("sendRawDataOnChain no rest");
-            return new ReturnMsgEntity().setStatus(retCodeConfiguration.BAD_REQUEST()).setResult("用户无此服务");
-        }
+//        int r = userServiceRepository.useRest(userServiceId);
+//        if (1 != r) {
+//            logger.error("sendRawDataOnChain no rest");
+//            System.out.println("sendRawDataOnChain no rest");
+//            return new ReturnMsgEntity().setStatus(retCodeConfiguration.BAD_REQUEST()).setResult("用户无此服务");
+//        }
 
 
         //Pack data to tx for record.
@@ -130,13 +131,13 @@ public class ElaDidChainDataService {
         }
 
         if (ret.getStatus() == retCodeConfiguration.SUCC()) {
-            UpChainRecord upChainRecord = new UpChainRecord();
-            upChainRecord.setTxid((String) ret.getResult());
-            upChainRecord.setType(UpChainRecord.UpChainType.Raw_Data_Up_Chain);
-            upChainRecordRepository.save(upChainRecord);
+//            UpChainRecord upChainRecord = new UpChainRecord();
+//            upChainRecord.setTxid((String) ret.getResult());
+//            upChainRecord.setType(UpChainRecord.UpChainType.Raw_Data_Up_Chain);
+//            upChainRecordRepository.save(upChainRecord);
         } else {
             //Up chain failed, make the rest back.
-            userServiceRepository.addRest(1L, userServiceId);
+//            userServiceRepository.addRest(1L, userServiceId);
             logger.error("Err sendRawDataOnChain upChainData failed.");
             System.out.println("Err sendRawDataOnChain upChainData failed.");
         }
