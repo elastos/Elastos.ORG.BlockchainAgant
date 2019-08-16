@@ -131,15 +131,15 @@ public class ElaDidChainDataService {
         }
 
         if (ret.getStatus() == retCodeConfiguration.SUCC()) {
-//            UpChainRecord upChainRecord = new UpChainRecord();
-//            upChainRecord.setTxid((String) ret.getResult());
-//            upChainRecord.setType(UpChainRecord.UpChainType.Raw_Data_Up_Chain);
-//            upChainRecordRepository.save(upChainRecord);
+            UpChainRecord upChainRecord = new UpChainRecord();
+            upChainRecord.setTxid((String) ret.getResult());
+            upChainRecord.setType(UpChainRecord.UpChainType.Raw_Data_Up_Chain);
+            upChainRecordRepository.save(upChainRecord);
         } else {
             //Up chain failed, make the rest back.
 //            userServiceRepository.addRest(1L, userServiceId);
-            logger.error("Err sendRawDataOnChain upChainData failed.");
-            System.out.println("Err sendRawDataOnChain upChainData failed.");
+            logger.error("Err sendRawDataOnChain upChainData failed. result:"+ ret.getResult());
+            System.out.println("Err sendRawDataOnChain upChainData failed." + ret.getResult());
         }
         return ret;
     }

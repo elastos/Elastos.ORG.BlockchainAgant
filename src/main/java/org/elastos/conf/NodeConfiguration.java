@@ -37,15 +37,15 @@ public class NodeConfiguration {
     private String utxoByAddr          ;
     private String sendRawTransaction  ;
     private String transactionPool     ;
-    private String didJSONRPC          ;
+    private String restart             ;
     private ChainType chainType       = ChainType.DID_SIDECHAIN;
 
-    public String getDidJSONRPC() {
-        return didJSONRPC;
+    public String getRestart() {
+        return restart;
     }
 
-    public void setDidJSONRPC(String didJSONRPC) {
-        this.didJSONRPC = didJSONRPC;
+    public void setRestart(String restart) {
+        this.restart = restart;
     }
 
     public String getConnectionCount() {
@@ -162,6 +162,10 @@ public class NodeConfiguration {
 
     public void setSendRawTransaction(String sendRawTransaction) {
         this.sendRawTransaction = sendRawTransaction;
+    }
+
+    public String getSendRawTransaction() {
+        return sendRawTransaction;
     }
 
     public void setTransactionPool(String transactionPool) {
