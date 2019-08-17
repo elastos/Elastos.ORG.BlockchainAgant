@@ -11,6 +11,7 @@ public class UpChainRecord {
     public enum UpChainType{
         Deposit_Wallets_Transaction,
         Raw_Data_Up_Chain,
+        Wallets_Deposit_Transaction,
     }
 
     @Id

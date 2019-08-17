@@ -200,7 +200,7 @@ public class UpChainWalletsManager implements InitializingBean {
             ret = transaction.transfer();
         } catch (Exception e) {
             e.printStackTrace();
-            ret = new ReturnMsgEntity().setResult("Err: averageRenewalUpChainWallets transfer failed").setStatus(retCodeConfiguration.PROCESS_ERROR());
+            ret = new ReturnMsgEntity().setResult("Err: averageRenewalUpChainWallets transfer failed. Error:" + e.getMessage()).setStatus(retCodeConfiguration.PROCESS_ERROR());
         }
 
         if (ret.getStatus() == retCodeConfiguration.SUCC()) {
@@ -226,16 +226,16 @@ public class UpChainWalletsManager implements InitializingBean {
         String sendAddr = Ela.getAddressFromPrivate(depositWallet.getPrivateKey());
         transaction.addSender(sendAddr, depositWallet.getPrivateKey());
 
-        Double threshold = walletsConfiguration.getThreshold() * Double.valueOf(didConfiguration.getFee());
+        Double threshold = walletsConfiguration.getThreshold() * didConfiguration.getFee();
         for (ElaHdWallet wallet : walletList) {
             double fee = threshold - wallet.getRest();
             if (fee > 0.0) {
-                transaction.addReceiver(wallet.getPublicAddress(), threshold + fee);
+                transaction.addReceiver(wallet.getPublicAddress(), threshold);
             }
         }
 
         if (transaction.getReceiverList().isEmpty()) {
-            return new ReturnMsgEntity().setResult("No need to renewal").setStatus(retCodeConfiguration.SUCC());
+            return new ReturnMsgEntity().setResult("renewalUpChainWallets no need to renewal").setStatus(retCodeConfiguration.SUCC());
         }
 
         ReturnMsgEntity ret;
@@ -243,7 +243,7 @@ public class UpChainWalletsManager implements InitializingBean {
             ret = transaction.transfer();
         } catch (Exception e) {
             e.printStackTrace();
-            ret = new ReturnMsgEntity().setResult("Err: renewalUpChainWallets transfer failed").setStatus(retCodeConfiguration.PROCESS_ERROR());
+            ret = new ReturnMsgEntity().setResult("Err: renewalUpChainWallets transfer failed. Error:" + e.getMessage()).setStatus(retCodeConfiguration.PROCESS_ERROR());
         }
 
         if (ret.getStatus() == retCodeConfiguration.SUCC()) {
@@ -253,6 +253,54 @@ public class UpChainWalletsManager implements InitializingBean {
             upChainRecordRepository.save(upChainRecord);
         } else {
             logger.error("Err renewalUpChainWallets transfer failed.");
+        }
+
+        return ret;
+    }
+
+    @Synchronized
+    public ReturnMsgEntity gatherUpChainWallets() {
+        ChainType chainType = nodeConfiguration.getChainType();
+
+        ElaTransaction transaction = new ElaTransaction(chainType, "gatherUpChainWallets: Transfer up chain wallets ela to deposit address.");
+        transaction.setRetCodeConfiguration(retCodeConfiguration);
+        transaction.setDidConfiguration(didConfiguration);
+        transaction.setBasicConfiguration(basicConfiguration);
+        transaction.setDidNodeService(didNodeService);
+
+        Double threshold = walletsConfiguration.getThreshold() * didConfiguration.getFee();
+        Double value = 0.0;
+        for (ElaHdWallet wallet : walletList) {
+            Double rest = didNodeService.getBalancesByAddr(wallet.getPublicAddress());
+            wallet.setRest(rest);
+            double v = rest - (threshold * 2);
+            if (v > didConfiguration.getFee()) {
+                transaction.addSender(wallet.getPublicAddress(),wallet.getPrivateKey());
+                value += v;
+            }
+        }
+
+        if (transaction.getSenderList().isEmpty()) {
+            return new ReturnMsgEntity().setResult("gatherUpChainWallets no need to renewal").setStatus(retCodeConfiguration.SUCC());
+        }
+
+        transaction.addReceiver(depositWallet.getAddress(), value);
+
+        ReturnMsgEntity ret;
+        try {
+            ret = transaction.transfer();
+        } catch (Exception e) {
+            e.printStackTrace();
+            ret = new ReturnMsgEntity().setResult("Err: gatherUpChainWallets transfer failed. Error:" + e.getMessage()).setStatus(retCodeConfiguration.PROCESS_ERROR());
+        }
+
+        if (ret.getStatus() == retCodeConfiguration.SUCC()) {
+            UpChainRecord upChainRecord = new UpChainRecord();
+            upChainRecord.setTxid((String) ret.getResult());
+            upChainRecord.setType(UpChainRecord.UpChainType.Wallets_Deposit_Transaction);
+            upChainRecordRepository.save(upChainRecord);
+        } else {
+            logger.error("Err gatherUpChainWallets transfer failed.");
         }
 
         return ret;

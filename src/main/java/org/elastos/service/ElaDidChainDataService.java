@@ -121,13 +121,13 @@ public class ElaDidChainDataService {
         String sendAddr = Ela.getAddressFromPrivate(wallet.getPrivateKey());
         transaction.addSender(sendAddr, wallet.getPrivateKey());
         //Transfer ela to sender itself. the only record payment is miner FEE.
-        transaction.addReceiver(sendAddr, Double.parseDouble(didConfiguration.getFee()));
+        transaction.addReceiver(sendAddr, didConfiguration.getFee());
         ReturnMsgEntity ret;
         try {
             ret = transaction.transfer();
         } catch (Exception e) {
             e.printStackTrace();
-            ret = new ReturnMsgEntity().setResult("Err: sendRawDataOnChain transfer failed").setStatus(retCodeConfiguration.PROCESS_ERROR());
+            ret = new ReturnMsgEntity().setResult("Err: sendRawDataOnChain transfer failed. Error:" + e.getMessage()).setStatus(retCodeConfiguration.PROCESS_ERROR());
         }
 
         if (ret.getStatus() == retCodeConfiguration.SUCC()) {
@@ -138,7 +138,7 @@ public class ElaDidChainDataService {
         } else {
             //Up chain failed, make the rest back.
 //            userServiceRepository.addRest(1L, userServiceId);
-            logger.error("Err sendRawDataOnChain upChainData failed. result:"+ ret.getResult());
+            logger.error("Err sendRawDataOnChain upChainData failed. result:" + ret.getResult());
             System.out.println("Err sendRawDataOnChain upChainData failed." + ret.getResult());
         }
         return ret;
@@ -182,7 +182,7 @@ public class ElaDidChainDataService {
             ret = transaction.transfer();
         } catch (Exception e) {
             e.printStackTrace();
-            ret = new ReturnMsgEntity().setResult("Err: sendRawDataOnChain transfer failed").setStatus(retCodeConfiguration.PROCESS_ERROR());
+            ret = new ReturnMsgEntity().setResult("Err: sendRawDataOnChain transfer failed. Error:" + e.getMessage()).setStatus(retCodeConfiguration.PROCESS_ERROR());
         }
 
         return ret;

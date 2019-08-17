@@ -10,6 +10,7 @@ import com.alibaba.fastjson.JSON;
 import org.elastos.annotation.Access;
 import org.elastos.entity.ReturnMsgEntity;
 import org.elastos.service.ElaDidChainDataService;
+import org.elastos.service.UpChainWalletsManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,9 @@ public class ElaDidChainDataController {
     @Autowired
     private ElaDidChainDataService didChainService;
 
+    @Autowired
+    private UpChainWalletsManager upChainWalletsManager;
+
     @RequestMapping(value = "rest", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public String getRest() {
@@ -37,6 +41,13 @@ public class ElaDidChainDataController {
     @ResponseBody
     public String getDepositAddress() {
         ReturnMsgEntity ret = didChainService.getDepositAddress();
+        return JSON.toJSONString(ret);
+    }
+
+    @PostMapping(value = "deposit/gather", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public String gatherAllWallet(@RequestAttribute String reqBody) {
+        ReturnMsgEntity ret = upChainWalletsManager.gatherUpChainWallets();
         return JSON.toJSONString(ret);
     }
 

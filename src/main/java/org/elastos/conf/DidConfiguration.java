@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties("did")
 public class DidConfiguration {
-    private String fee;
+    private double fee;
     private String mainChainAddress;
     private String burnAddress;
 
@@ -37,11 +37,11 @@ public class DidConfiguration {
         this.burnAddress = burnAddress;
     }
 
-    public String getFee() {
+    public double getFee() {
         return fee;
     }
 
-    public void setFee(String fee) {
+    public void setFee(double fee) {
         this.fee = fee;
     }
 }
