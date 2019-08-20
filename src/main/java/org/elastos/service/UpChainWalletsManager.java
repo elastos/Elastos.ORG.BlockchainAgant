@@ -227,8 +227,8 @@ public class UpChainWalletsManager implements InitializingBean {
 
     @Synchronized
     public ReturnMsgEntity renewalUpChainWallets() {
-        if (!taskOnFlag) {
-            return new ReturnMsgEntity().setResult("renewalUpChainWallets stop for internal process.").setStatus(retCodeConfiguration.SUCC());
+        if (!isTaskOnFlag()) {
+            return new ReturnMsgEntity().setResult("renewalUpChainWallets stop for internal process.").setStatus(retCodeConfiguration.PROCESS_ERROR());
         }
         ChainType chainType = nodeConfiguration.getChainType();
 

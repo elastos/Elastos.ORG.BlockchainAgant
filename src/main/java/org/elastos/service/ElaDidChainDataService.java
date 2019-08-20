@@ -109,7 +109,7 @@ public class ElaDidChainDataService {
 //    public ReturnMsgEntity sendRawDataOnChain(String data, Long userServiceId) {
     public ReturnMsgEntity sendRawDataOnChain(String data) {
         if(!isTaskOnFlag()){
-            return new ReturnMsgEntity().setResult("Up chain service is not on").setStatus(retCodeConfiguration.SUCC());
+            return new ReturnMsgEntity().setResult("Up chain service is not on").setStatus(retCodeConfiguration.PROCESS_ERROR());
         }
 //        int r = userServiceRepository.useRest(userServiceId);
 //        if (1 != r) {
