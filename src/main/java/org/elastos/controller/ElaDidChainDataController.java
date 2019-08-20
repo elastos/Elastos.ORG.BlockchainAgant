@@ -7,7 +7,9 @@
 package org.elastos.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import org.elastos.annotation.Access;
+import org.elastos.conf.RetCodeConfiguration;
 import org.elastos.entity.ReturnMsgEntity;
 import org.elastos.service.ElaDidChainDataService;
 import org.elastos.service.UpChainWalletsManager;
@@ -25,7 +27,10 @@ public class ElaDidChainDataController {
     private static Logger logger = LoggerFactory.getLogger(ElaDidChainDataController.class);
 
     @Autowired
-    private ElaDidChainDataService didChainService;
+    RetCodeConfiguration retCodeConfiguration;
+
+    @Autowired
+    private ElaDidChainDataService elaDidChainDataService;
 
     @Autowired
     private UpChainWalletsManager upChainWalletsManager;
@@ -33,14 +38,14 @@ public class ElaDidChainDataController {
     @RequestMapping(value = "rest", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public String getRest() {
-        ReturnMsgEntity ret = didChainService.getRest();
+        ReturnMsgEntity ret = elaDidChainDataService.getRest();
         return JSON.toJSONString(ret);
     }
 
     @RequestMapping(value = "deposit/address", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public String getDepositAddress() {
-        ReturnMsgEntity ret = didChainService.getDepositAddress();
+        ReturnMsgEntity ret = elaDidChainDataService.getDepositAddress();
         return JSON.toJSONString(ret);
     }
 
@@ -51,12 +56,22 @@ public class ElaDidChainDataController {
         return JSON.toJSONString(ret);
     }
 
+    @PostMapping(value = "deposit/taskswitch", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public String renewalTaskStop(@RequestAttribute String reqBody) {
+        JSONObject obj = JSON.parseObject(reqBody);
+        boolean flag = obj.getBooleanValue("switch");
+        upChainWalletsManager.setTaskOnFlag(flag);
+        elaDidChainDataService.setTaskOnFlag(flag);
+        return JSON.toJSONString(new ReturnMsgEntity().setStatus(retCodeConfiguration.SUCC()));
+    }
+
     @PostMapping(value = "wallets/renewal", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public String sendRenewalUpChainWallets(@RequestAttribute String reqBody) {
         Map<String, String> map = (Map<String, String>) JSON.parse(reqBody);
         Double ela = Double.valueOf(map.get("ela"));
-        ReturnMsgEntity ret = didChainService.renewalUpChainWallets(ela);
+        ReturnMsgEntity ret = elaDidChainDataService.renewalUpChainWallets(ela);
         return JSON.toJSONString(ret);
     }
 
@@ -64,7 +79,7 @@ public class ElaDidChainDataController {
     @ResponseBody
     @Access
     public String sendRawDataOnChain(@RequestAttribute String reqBody) {
-        ReturnMsgEntity ret = didChainService.sendRawDataOnChain(reqBody);
+        ReturnMsgEntity ret = elaDidChainDataService.sendRawDataOnChain(reqBody);
         return JSON.toJSONString(ret);
     }
 

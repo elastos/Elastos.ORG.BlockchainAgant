@@ -56,6 +56,21 @@ public class DidNodeService {
         }
     }
 
+    public Object getTransaction(String txid) {
+        ReturnMsgEntity msgEntity = elaReqChainData(ReqMethod.GET, nodeConfiguration.getTransaction() + "/" + txid, null);
+        if (msgEntity.getStatus() == retCodeConfiguration.SUCC()) {
+            try {
+                return msgEntity.getResult();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                logger.warn(" getTransaction has no txid yet.");
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
+
     public List<Map> getUtxoListByAddr(String address) {
 
         checkAddr(address);

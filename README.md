@@ -152,3 +152,12 @@ If Success, we will get response like:
     "status": 200
 }
 ```
+
+### Turn on/off up data service
+HTTP: POST
+URL : /api/1/blockagent/upchain/deposit/taskswitch
+data:{"switch":false}
+return:
+    成功：{"status":200}
+    失败:{"status":400, "message":"err msg"}
+

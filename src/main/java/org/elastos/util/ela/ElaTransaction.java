@@ -107,8 +107,8 @@ public class ElaTransaction {
         this.chainType = chainType;
     }
 
-    public String getSenderList() {
-        return JSON.toJSONString(senderList);
+    public List<Sender> getSenderList() {
+        return senderList;
     }
 
     public List<Receiver> getReceiverList() {
@@ -117,6 +117,10 @@ public class ElaTransaction {
 
     public double getTotalFee() {
         return totalFee;
+    }
+
+    public void setTotalFee(Double totalFee) {
+        this.totalFee = totalFee;
     }
 
     public void addSender(String addr, String priKey) {
