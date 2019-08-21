@@ -37,7 +37,7 @@ public class UpChainWalletsManager implements InitializingBean {
     private int index = 0;
     private int sum = 0;
 
-    private final int procMax = 1000;
+    private final int procMax = 500;
     private boolean taskOnFlag = true;
 
     @Autowired
