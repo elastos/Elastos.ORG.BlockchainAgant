@@ -51,14 +51,14 @@ public class ElaDidChainDataService {
     @Autowired
     UserServiceRepository userServiceRepository;
 
-    private boolean taskOnFlag = true;
+    private boolean serviceOnFlag = true;
 
-    public boolean isTaskOnFlag() {
-        return taskOnFlag;
+    public boolean isServiceOnFlag() {
+        return serviceOnFlag;
     }
 
-    public void setTaskOnFlag(boolean taskOnFlag) {
-        this.taskOnFlag = taskOnFlag;
+    public void setServiceOnFlag(boolean serviceOnFlag) {
+        this.serviceOnFlag = serviceOnFlag;
     }
 
     //1. 用户获取充值钱包地址。
@@ -108,7 +108,7 @@ public class ElaDidChainDataService {
     //3. 使用上链钱包进行上链记录
 //    public ReturnMsgEntity sendRawDataOnChain(String data, Long userServiceId) {
     public ReturnMsgEntity sendRawDataOnChain(String data) {
-        if(!isTaskOnFlag()){
+        if(!isServiceOnFlag()){
             return new ReturnMsgEntity().setResult("Up chain service is not on").setStatus(retCodeConfiguration.PROCESS_ERROR());
         }
 //        int r = userServiceRepository.useRest(userServiceId);

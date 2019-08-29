@@ -22,12 +22,13 @@ public class WalltesMonitorTask {
 
 
     //Send Our data to BChain every 10min
-    @Scheduled(initialDelay = 5 * 60 * 1000, fixedDelay = 5 * 60 * 1000)
+    @Scheduled(initialDelay = 5 * 60 * 1000, fixedDelay = 10 * 60 * 1000)
     public void afterPropertiesSet() throws Exception {
         System.out.println("扫描开始时间：" + dateFormat.format(new Date()));
         upChainWalletsManager.updateWalletsRestFromNode();
         System.out.println("扫描结束时间：" + dateFormat.format(new Date()));
         upChainWalletsManager.renewalUpChainWallets();
+        upChainWalletsManager.gatherUpChainWallets();
     }
 
 }

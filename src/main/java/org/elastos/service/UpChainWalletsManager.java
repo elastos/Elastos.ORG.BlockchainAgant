@@ -37,8 +37,8 @@ public class UpChainWalletsManager implements InitializingBean {
     private int index = 0;
     private int sum = 0;
 
-    private final int procMax = 500;
-    private boolean taskOnFlag = true;
+    private boolean taskOnFlag = false;
+    private boolean gatherOnFlag = false;
 
     @Autowired
     WalletsConfiguration walletsConfiguration;
@@ -78,6 +78,14 @@ public class UpChainWalletsManager implements InitializingBean {
 
     public void setTaskOnFlag(boolean taskOnFlag) {
         this.taskOnFlag = taskOnFlag;
+    }
+
+    public boolean isGatherOnFlag() {
+        return gatherOnFlag;
+    }
+
+    public void setGatherOnFlag(boolean gatherOnFlag) {
+        this.gatherOnFlag = gatherOnFlag;
     }
 
     void generateUpChainWallets() {
@@ -191,6 +199,7 @@ public class UpChainWalletsManager implements InitializingBean {
         }
     }
 
+    @Synchronized
     public ReturnMsgEntity averageRenewalUpChainWallets(Double ela) {
         ChainType chainType = nodeConfiguration.getChainType();
 
@@ -228,15 +237,10 @@ public class UpChainWalletsManager implements InitializingBean {
     @Synchronized
     public ReturnMsgEntity renewalUpChainWallets() {
         if (!isTaskOnFlag()) {
-            return new ReturnMsgEntity().setResult("renewalUpChainWallets stop for internal process.").setStatus(retCodeConfiguration.PROCESS_ERROR());
+            return new ReturnMsgEntity().setResult("renewalUpChainWallets stop.").setStatus(retCodeConfiguration.PROCESS_ERROR());
         }
-        ChainType chainType = nodeConfiguration.getChainType();
 
-        ElaTransaction transaction = new ElaTransaction(chainType, "renewalUpChainWallets: Transfer deposit to up chain wallets");
-        transaction.setRetCodeConfiguration(retCodeConfiguration);
-        transaction.setDidConfiguration(didConfiguration);
-        transaction.setBasicConfiguration(basicConfiguration);
-        transaction.setDidNodeService(didNodeService);
+        ElaTransaction transaction = geneElaTransaction("renewalUpChainWallets: Transfer deposit to up chain wallets");
 
 
         Double threshold = walletsConfiguration.getThreshold() * didConfiguration.getFee();
@@ -246,13 +250,11 @@ public class UpChainWalletsManager implements InitializingBean {
                 transaction.addReceiver(wallet.getPublicAddress(), threshold);
             }
             //If the worker address is more than 100, we renewal more than one times
-            if (transaction.getReceiverList().size() >= procMax) {
+            if (transaction.getReceiverList().size() >= walletsConfiguration.getSumPerGather()) {
                 String sendAddr = Ela.getAddressFromPrivate(depositWallet.getPrivateKey());
                 transaction.addSender(sendAddr, depositWallet.getPrivateKey());
                 ReturnMsgEntity ret = transferEla(transaction, UpChainRecord.UpChainType.Deposit_Wallets_Transaction);
-                transaction.getReceiverList().clear();
-                transaction.getSenderList().clear();
-                transaction.setTotalFee(0.0);
+                transaction = geneElaTransaction("renewalUpChainWallets: Transfer deposit to up chain wallets");
                 if (ret.getStatus() == retCodeConfiguration.SUCC()){
                     waitTxFinish((String)ret.getResult(), 3, 3);
                 } else {
@@ -277,6 +279,16 @@ public class UpChainWalletsManager implements InitializingBean {
         }
 
         return ret;
+    }
+
+    private ElaTransaction geneElaTransaction(String memo) {
+        ChainType chainType = nodeConfiguration.getChainType();
+        ElaTransaction transaction = new ElaTransaction(chainType, memo);
+        transaction.setRetCodeConfiguration(retCodeConfiguration);
+        transaction.setDidConfiguration(didConfiguration);
+        transaction.setBasicConfiguration(basicConfiguration);
+        transaction.setDidNodeService(didNodeService);
+        return transaction;
     }
 
 
@@ -319,13 +331,11 @@ public class UpChainWalletsManager implements InitializingBean {
 
     @Synchronized
     public ReturnMsgEntity gatherUpChainWallets() {
-        ChainType chainType = nodeConfiguration.getChainType();
+        if(!isGatherOnFlag()){
+            return new ReturnMsgEntity().setResult("gatherUpChainWallets stop.").setStatus(retCodeConfiguration.PROCESS_ERROR());
+        }
 
-        ElaTransaction transaction = new ElaTransaction(chainType, "gatherUpChainWallets: Transfer up chain wallets ela to deposit address.");
-        transaction.setRetCodeConfiguration(retCodeConfiguration);
-        transaction.setDidConfiguration(didConfiguration);
-        transaction.setBasicConfiguration(basicConfiguration);
-        transaction.setDidNodeService(didNodeService);
+        ElaTransaction transaction = geneElaTransaction("gatherUpChainWallets: Transfer up chain wallets ela to deposit address.");
 
         Double value = 0.0;
         for (ElaHdWallet wallet : walletList) {
@@ -336,13 +346,11 @@ public class UpChainWalletsManager implements InitializingBean {
                 value += rest;
             }
 
-            if (transaction.getSenderList().size() >= procMax) {
+            if (transaction.getSenderList().size() >= walletsConfiguration.getSumPerGather()) {
                 transaction.addReceiver(depositWallet.getAddress(), value - didConfiguration.getFee());
                 logger.info("gatherUpChainWallets interrupted.");
                 transferEla(transaction, UpChainRecord.UpChainType.Wallets_Deposit_Transaction);
-                transaction.setTotalFee(0.0);
-                transaction.getSenderList().clear();
-                transaction.getReceiverList().clear();
+                transaction = geneElaTransaction("gatherUpChainWallets: Transfer up chain wallets ela to deposit address.");
                 value = 0.0;
             }
         }

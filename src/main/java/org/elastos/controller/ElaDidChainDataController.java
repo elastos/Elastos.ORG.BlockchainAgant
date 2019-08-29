@@ -52,25 +52,34 @@ public class ElaDidChainDataController {
     @PostMapping(value = "deposit/gather", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public String gatherAllWallet(@RequestAttribute String reqBody) {
-        ReturnMsgEntity ret = upChainWalletsManager.gatherUpChainWallets();
-        return JSON.toJSONString(ret);
+        elaDidChainDataService.setServiceOnFlag(false);
+        upChainWalletsManager.setTaskOnFlag(false);
+        upChainWalletsManager.setGatherOnFlag(true);
+        return JSON.toJSONString(new ReturnMsgEntity().setStatus(retCodeConfiguration.SUCC()));
     }
 
-    @PostMapping(value = "deposit/taskswitch", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "switch", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public String renewalTaskStop(@RequestAttribute String reqBody) {
         JSONObject obj = JSON.parseObject(reqBody);
-        boolean flag = obj.getBooleanValue("switch");
-        upChainWalletsManager.setTaskOnFlag(flag);
-        elaDidChainDataService.setTaskOnFlag(flag);
+        boolean serviceFlag = obj.getBooleanValue("service");
+        boolean taskFlag = obj.getBooleanValue("task");
+        elaDidChainDataService.setServiceOnFlag(serviceFlag);
+        upChainWalletsManager.setTaskOnFlag(taskFlag);
+        Boolean gatherFlag = obj.getBoolean("gather");
+        if (null == gatherFlag) {
+            upChainWalletsManager.setGatherOnFlag(false);
+        } else {
+            upChainWalletsManager.setGatherOnFlag(gatherFlag);
+        }
         return JSON.toJSONString(new ReturnMsgEntity().setStatus(retCodeConfiguration.SUCC()));
     }
 
     @PostMapping(value = "wallets/renewal", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public String sendRenewalUpChainWallets(@RequestAttribute String reqBody) {
-        Map<String, String> map = (Map<String, String>) JSON.parse(reqBody);
-        Double ela = Double.valueOf(map.get("ela"));
+        JSONObject map =  JSON.parseObject(reqBody);
+        Double ela = map.getDouble("ela");
         ReturnMsgEntity ret = elaDidChainDataService.renewalUpChainWallets(ela);
         return JSON.toJSONString(ret);
     }

@@ -153,10 +153,13 @@ If Success, we will get response like:
 }
 ```
 
-### Turn on/off up data service
+### Turn on/off up data service and timer task
 HTTP: POST
-URL : /api/1/blockagent/upchain/deposit/taskswitch
-data:{"switch":false}
+URL : /api/1/blockagent/upchain/switch
+data:{
+    "service":true,
+    "task":false
+}
 return:
     成功：{"status":200}
     失败:{"status":400, "message":"err msg"}

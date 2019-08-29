@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 public class WalletsConfiguration {
     private int sum;
     private int threshold;
+    private int sumPerGather;
 
     public int getSum() {
         return sum;
@@ -29,5 +30,13 @@ public class WalletsConfiguration {
 
     public void setThreshold(int threshold) {
         this.threshold = threshold;
+    }
+
+    public int getSumPerGather() {
+        return sumPerGather;
+    }
+
+    public void setSumPerGather(int sumPerGather) {
+        this.sumPerGather = sumPerGather;
     }
 }
