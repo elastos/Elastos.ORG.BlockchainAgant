@@ -104,7 +104,7 @@ public class HttpUtil {
             HttpResponse response = client.execute(httpGet);
 
             int code = response.getStatusLine().getStatusCode();
-            logger.debug("get URL：" + url + ";code："+ code);
+//            logger.debug("get URL：" + url + ";code："+ code);
             if (code == HttpStatus.SC_OK) {
                 String result = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
                 return result;

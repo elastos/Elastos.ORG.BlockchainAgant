@@ -243,14 +243,14 @@ public class UpChainWalletsManager implements InitializingBean {
         ElaTransaction transaction = geneElaTransaction("renewalUpChainWallets: Transfer deposit to up chain wallets");
 
 
-        Double threshold = walletsConfiguration.getThreshold() * didConfiguration.getFee();
+        Double renewalValue = walletsConfiguration.getRenewalValue() * didConfiguration.getFee();
         for (ElaHdWallet wallet : walletList) {
-            double fee = threshold - wallet.getRest();
+            double fee = renewalValue - wallet.getRest();
             if (fee > 0.0) {
-                transaction.addReceiver(wallet.getPublicAddress(), threshold);
+                transaction.addReceiver(wallet.getPublicAddress(), renewalValue);
             }
             //If the worker address is more than 100, we renewal more than one times
-            if (transaction.getReceiverList().size() >= walletsConfiguration.getSumPerGather()) {
+            if (transaction.getReceiverList().size() >= walletsConfiguration.getAddrNoPerRenewal()) {
                 String sendAddr = Ela.getAddressFromPrivate(depositWallet.getPrivateKey());
                 transaction.addSender(sendAddr, depositWallet.getPrivateKey());
                 ReturnMsgEntity ret = transferEla(transaction, UpChainRecord.UpChainType.Deposit_Wallets_Transaction);
@@ -340,22 +340,32 @@ public class UpChainWalletsManager implements InitializingBean {
         Double value = 0.0;
         for (ElaHdWallet wallet : walletList) {
             Double rest = didNodeService.getBalancesByAddr(wallet.getPublicAddress());
-            wallet.setRest(rest);
+            if (null != rest) {
+                wallet.setRest(rest);
+            } else {
+                rest = 0.0;
+            }
             if (rest > didConfiguration.getFee()) {
                 transaction.addSender(wallet.getPublicAddress(), wallet.getPrivateKey());
                 value += rest;
             }
 
-            if (transaction.getSenderList().size() >= walletsConfiguration.getSumPerGather()) {
+            if (transaction.getSenderList().size() >= walletsConfiguration.getAddrNoPerGather()) {
                 transaction.addReceiver(depositWallet.getAddress(), value - didConfiguration.getFee());
-                logger.info("gatherUpChainWallets interrupted.");
                 transferEla(transaction, UpChainRecord.UpChainType.Wallets_Deposit_Transaction);
+                try {
+                    TimeUnit.SECONDS.sleep(20);
+                } catch (InterruptedException e) {
+                    logger.info("gatherUpChainWallets wait interrupted");
+                }
+
                 transaction = geneElaTransaction("gatherUpChainWallets: Transfer up chain wallets ela to deposit address.");
                 value = 0.0;
             }
         }
 
         if (transaction.getSenderList().isEmpty()) {
+            setGatherOnFlag(false);
             return new ReturnMsgEntity().setStatus(retCodeConfiguration.SUCC());
         }
 
@@ -365,6 +375,7 @@ public class UpChainWalletsManager implements InitializingBean {
         if (ret.getStatus() != retCodeConfiguration.SUCC()) {
             logger.error("Err gatherUpChainWallets transfer failed.");
         }
+        setGatherOnFlag(false);
         return ret;
     }
 
@@ -397,6 +408,8 @@ public class UpChainWalletsManager implements InitializingBean {
             Double rest = didNodeService.getBalancesByAddr(w.getPublicAddress());
             if (null != rest) {
                 w.setRest(rest);
+            } else {
+                w.setRest(0.0);
             }
         }
     }

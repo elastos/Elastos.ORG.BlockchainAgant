@@ -20,15 +20,25 @@ public class WalltesMonitorTask {
     @Autowired
     UpChainWalletsManager upChainWalletsManager;
 
-
-    //Send Our data to BChain every 10min
-    @Scheduled(initialDelay = 5 * 60 * 1000, fixedDelay = 10 * 60 * 1000)
-    public void afterPropertiesSet() throws Exception {
-        System.out.println("扫描开始时间：" + dateFormat.format(new Date()));
+    @Scheduled(fixedDelay = 5 * 60 * 1000)
+    public void scanWorkerAddressRest() throws Exception {
+        logger.debug("扫描开始时间：" + dateFormat.format(new Date()));
         upChainWalletsManager.updateWalletsRestFromNode();
-        System.out.println("扫描结束时间：" + dateFormat.format(new Date()));
+        logger.debug("扫描结束时间：" + dateFormat.format(new Date()));
+    }
+
+    @Scheduled(initialDelay = 3 * 60 * 1000, fixedDelay = 10 * 60 * 1000)
+    public void renewalWallets() throws Exception {
+        logger.debug("充值开始时间：" + dateFormat.format(new Date()));
         upChainWalletsManager.renewalUpChainWallets();
+        logger.debug("充值结束时间：" + dateFormat.format(new Date()));
+    }
+
+    @Scheduled(fixedDelay = 60 * 1000)
+    public void gatherWallets() throws Exception {
+        logger.debug("归集开始时间：" + dateFormat.format(new Date()));
         upChainWalletsManager.gatherUpChainWallets();
+        logger.debug("归集结束时间：" + dateFormat.format(new Date()));
     }
 
 }

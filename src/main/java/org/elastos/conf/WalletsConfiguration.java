@@ -13,8 +13,9 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties("wallets")
 public class WalletsConfiguration {
     private int sum;
-    private int threshold;
-    private int sumPerGather;
+    private int renewalValue;
+    private int addrNoPerRenewal;
+    private int addrNoPerGather;
 
     public int getSum() {
         return sum;
@@ -24,19 +25,27 @@ public class WalletsConfiguration {
         this.sum = sum;
     }
 
-    public int getThreshold() {
-        return threshold;
+    public int getRenewalValue() {
+        return renewalValue;
     }
 
-    public void setThreshold(int threshold) {
-        this.threshold = threshold;
+    public void setRenewalValue(int renewalValue) {
+        this.renewalValue = renewalValue;
     }
 
-    public int getSumPerGather() {
-        return sumPerGather;
+    public int getAddrNoPerRenewal() {
+        return addrNoPerRenewal;
     }
 
-    public void setSumPerGather(int sumPerGather) {
-        this.sumPerGather = sumPerGather;
+    public void setAddrNoPerRenewal(int addrNoPerRenewal) {
+        this.addrNoPerRenewal = addrNoPerRenewal;
+    }
+
+    public int getAddrNoPerGather() {
+        return addrNoPerGather;
+    }
+
+    public void setAddrNoPerGather(int addrNoPerGather) {
+        this.addrNoPerGather = addrNoPerGather;
     }
 }
