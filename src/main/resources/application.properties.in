@@ -41,8 +41,8 @@ did.burnAddress          =0000000000000000000000000000000000
 did.mainChainAddress     =XKUh4GLhFJiqAMTF6HyWQrV9pK9HcGUdfJ
 
 ## Up chain wallets
-wallets.sum =10000
-wallets.renewalValue =10000
+wallets.sum =5000
+wallets.renewalValue =100
 wallets.addrNoPerRenewal=1000
 wallets.addrNoPerGather =100
 
