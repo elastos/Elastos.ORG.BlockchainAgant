@@ -1,5 +1,6 @@
 package org.elastos.service;
 
+import com.alibaba.fastjson.JSONObject;
 import org.elastos.conf.*;
 import org.elastos.dao.UpChainRecordRepository;
 import org.elastos.dao.UserServiceRepository;
@@ -8,6 +9,7 @@ import org.elastos.ela.Ela;
 import org.elastos.entity.ChainType;
 import org.elastos.entity.ReturnMsgEntity;
 import org.elastos.pojo.ElaHdWallet;
+import org.elastos.util.HttpUtil;
 import org.elastos.util.ela.DidNodeService;
 import org.elastos.util.ela.ElaTransaction;
 import org.slf4j.Logger;
@@ -38,6 +40,9 @@ public class ElaDidChainDataService {
 
     @Autowired
     RetCodeConfiguration retCodeConfiguration;
+
+    @Autowired
+    CacheConfiguration cacheConfiguration;
 
     @Autowired
     DidNodeService didNodeService;
@@ -143,17 +148,26 @@ public class ElaDidChainDataService {
         }
 
         if (ret.getStatus() == retCodeConfiguration.SUCC()) {
+            String txid = (String) ret.getResult();
             UpChainRecord upChainRecord = new UpChainRecord();
-            upChainRecord.setTxid((String) ret.getResult());
+            upChainRecord.setTxid(txid);
             upChainRecord.setType(UpChainRecord.UpChainType.Raw_Data_Up_Chain);
             upChainRecordRepository.save(upChainRecord);
+            sendRawDataToCache(data, txid);
+
         } else {
             //Up chain failed, make the rest back.
 //            userServiceRepository.addRest(1L, userServiceId);
-            logger.error("Err sendRawDataOnChain upChainData failed. result:" + ret.getResult());
-            System.out.println("Err sendRawDataOnChain upChainData failed." + ret.getResult());
+            logger.error("Err sendRawDataOnChain upChainData failed. result:" + ret.getResult()+" status:"+ret.getStatus());
         }
         return ret;
+    }
+
+    private void sendRawDataToCache(String data, String txid) {
+        JSONObject object = new JSONObject();
+        object.put("raw", data);
+        object.put("txid", txid);
+        HttpUtil.post(cacheConfiguration.getUrl(), object.toJSONString(), null);
     }
 
     //获取所有余额信息

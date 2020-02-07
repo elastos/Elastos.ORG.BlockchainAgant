@@ -18,6 +18,9 @@ node.transactionPool     = /api/v1/transactionpool
 node.restart             = /api/v1/restart
 node.chainType           = DID_SIDECHAIN
 
+## upchain data cache url
+cache.url = https://api-wallet-did.elastos.org/api/1/didexplorer/cache
+
 ## api return status code
 retcode.SUCC             = 200
 retcode.BAD_REQUEST      = 400

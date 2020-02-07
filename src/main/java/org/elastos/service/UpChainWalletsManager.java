@@ -229,6 +229,8 @@ public class UpChainWalletsManager implements InitializingBean {
             upChainRecord.setTxid((String) ret.getResult());
             upChainRecord.setType(UpChainRecord.UpChainType.Deposit_Wallets_Transaction);
             upChainRecordRepository.save(upChainRecord);
+        } else {
+            logger.error("Err averageRenewalUpChainWallets transferEla transfer failed. status:" + ret.getStatus() + "result:" + ret.getResult());
         }
 
         return ret;
@@ -255,8 +257,8 @@ public class UpChainWalletsManager implements InitializingBean {
                 transaction.addSender(sendAddr, depositWallet.getPrivateKey());
                 ReturnMsgEntity ret = transferEla(transaction, UpChainRecord.UpChainType.Deposit_Wallets_Transaction);
                 transaction = geneElaTransaction("renewalUpChainWallets: Transfer deposit to up chain wallets");
-                if (ret.getStatus() == retCodeConfiguration.SUCC()){
-                    waitTxFinish((String)ret.getResult(), 3, 3);
+                if (ret.getStatus() == retCodeConfiguration.SUCC()) {
+                    waitTxFinish((String) ret.getResult(), 3, 3);
                 } else {
                     try {
                         TimeUnit.MINUTES.sleep(5);
@@ -324,14 +326,14 @@ public class UpChainWalletsManager implements InitializingBean {
             upChainRecordRepository.save(upChainRecord);
             logger.debug("transferEla txid:" + ret.getResult());
         } else {
-            logger.error("Err transferEla transfer failed.");
+            logger.error("Err transferEla transfer failed. status:" + ret.getStatus() + " result:" + ret.getResult());
         }
         return ret;
     }
 
     @Synchronized
     public ReturnMsgEntity gatherUpChainWallets() {
-        if(!isGatherOnFlag()){
+        if (!isGatherOnFlag()) {
             return new ReturnMsgEntity().setResult("gatherUpChainWallets stop.").setStatus(retCodeConfiguration.PROCESS_ERROR());
         }
 
@@ -347,11 +349,11 @@ public class UpChainWalletsManager implements InitializingBean {
             }
             if (rest > didConfiguration.getFee()) {
                 transaction.addSender(wallet.getPublicAddress(), wallet.getPrivateKey());
-                value += rest;
+                value += rest - didConfiguration.getFee();
             }
 
             if (transaction.getSenderList().size() >= walletsConfiguration.getAddrNoPerGather()) {
-                transaction.addReceiver(depositWallet.getAddress(), value - didConfiguration.getFee());
+                transaction.addReceiver(depositWallet.getAddress(), value);
                 transferEla(transaction, UpChainRecord.UpChainType.Wallets_Deposit_Transaction);
                 try {
                     TimeUnit.SECONDS.sleep(20);
@@ -369,7 +371,7 @@ public class UpChainWalletsManager implements InitializingBean {
             return new ReturnMsgEntity().setStatus(retCodeConfiguration.SUCC());
         }
 
-        transaction.addReceiver(depositWallet.getAddress(), value - didConfiguration.getFee());
+        transaction.addReceiver(depositWallet.getAddress(), value);
 
         ReturnMsgEntity ret = transferEla(transaction, UpChainRecord.UpChainType.Wallets_Deposit_Transaction);
         if (ret.getStatus() != retCodeConfiguration.SUCC()) {
@@ -396,21 +398,29 @@ public class UpChainWalletsManager implements InitializingBean {
     @Synchronized
     public double getWalletsRest() {
         double rest = 0.0;
+        int i = 0;
         for (ElaHdWallet w : walletList) {
             rest += w.getRest();
+            System.out.println(" "+i+":"+w.getRest());
+            i++;
         }
+        System.out.println("");
         return rest;
     }
 
     @Synchronized
     public void updateWalletsRestFromNode() {
+        int i = 0;
         for (ElaHdWallet w : walletList) {
             Double rest = didNodeService.getBalancesByAddr(w.getPublicAddress());
             if (null != rest) {
                 w.setRest(rest);
+//                logger.info("rest of " + w.getPublicAddress() + " is:" + rest);
             } else {
                 w.setRest(0.0);
+                logger.info("rest of i:"+i+" address:" + w.getPublicAddress() + " set 0");
             }
+            i++;
         }
     }
 }
