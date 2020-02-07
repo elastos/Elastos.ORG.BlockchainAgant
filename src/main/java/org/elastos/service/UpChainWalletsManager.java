@@ -37,7 +37,7 @@ public class UpChainWalletsManager implements InitializingBean {
     private int index = 0;
     private int sum = 0;
 
-    private boolean taskOnFlag = false;
+    private boolean taskOnFlag = true;
     private boolean gatherOnFlag = false;
 
     @Autowired
