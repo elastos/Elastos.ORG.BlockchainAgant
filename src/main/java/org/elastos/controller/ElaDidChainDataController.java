@@ -92,6 +92,18 @@ public class ElaDidChainDataController {
         return JSON.toJSONString(ret);
     }
 
+    @RequestMapping(value = "data/dst", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @ResponseBody
+    @Access
+    public String sendRawDataOnChainAddress(@RequestAttribute String reqBody) {
+        JSONObject obj = JSON.parseObject(reqBody);
+        String data = obj.getString("data");
+        String address = obj.getString("address");
+
+        ReturnMsgEntity ret = elaDidChainDataService.sendRawDataOnChain(data, address);
+        return JSON.toJSONString(ret);
+    }
+
     @RequestMapping(value = "echo", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public String echo(@RequestAttribute String reqBody) {

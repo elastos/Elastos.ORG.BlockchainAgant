@@ -109,10 +109,13 @@ public class ElaDidChainDataService {
         return ret;
     }
 
+    public ReturnMsgEntity sendRawDataOnChain(String data) {
+        return sendRawDataOnChain(data, null);
+    }
 
     //3. 使用上链钱包进行上链记录
 //    public ReturnMsgEntity sendRawDataOnChain(String data, Long userServiceId) {
-    public ReturnMsgEntity sendRawDataOnChain(String data) {
+    public ReturnMsgEntity sendRawDataOnChain(String data, String address) {
         if(!isServiceOnFlag()){
             return new ReturnMsgEntity().setResult("Up chain service is not on").setStatus(retCodeConfiguration.PROCESS_ERROR());
         }
@@ -137,8 +140,12 @@ public class ElaDidChainDataService {
 
         String sendAddr = Ela.getAddressFromPrivate(wallet.getPrivateKey());
         transaction.addSender(sendAddr, wallet.getPrivateKey());
-        //Transfer ela to sender itself. the only record payment is miner FEE.
-        transaction.addReceiver(sendAddr, didConfiguration.getFee());
+        if (null == address) {
+            //Transfer ela to sender itself. the only record payment is miner FEE.
+            transaction.addReceiver(sendAddr, didConfiguration.getFee());
+        } else {
+            transaction.addReceiver(address, didConfiguration.getFee());
+        }
         ReturnMsgEntity ret;
         try {
             ret = transaction.transfer();
